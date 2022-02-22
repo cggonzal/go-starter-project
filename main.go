@@ -2,13 +2,12 @@ package main
 
 import (
     "starterProject/DB"
-
+    "starterProject/customUser"
 )
 
 func main() {
-	// "Signin" and "Signup" are handler that we will implement
-	http.HandleFunc("/signin", Signin)
-	http.HandleFunc("/signup", Signup)
+	http.HandleFunc("/signin", customUser.Signin)
+	http.HandleFunc("/signup", customUser.Signup)
 	// initialize our database connection
 	initDB()
 	// start the server on port 8000
