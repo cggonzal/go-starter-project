@@ -17,7 +17,6 @@ func main() {
 func initDB(){
 	var err error
 	// Connect to the postgres db
-	//you might have to change the connection string to add your database credentials
     DB.DBCon, err = sql.Open("postgres", "dbname=mydb sslmode=disable") // TODO: change to use environment variables
 	if err != nil {
 		panic(err)

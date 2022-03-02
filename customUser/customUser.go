@@ -61,13 +61,14 @@ func Signup(w http.ResponseWriter, r *http.Request){
     hashedPassword, err := bcrypt.GenerateFromPassword([]byte(creds.Password), BCRYPT_COST)
 
     // Next, insert the username, along with the hashed password into the database                                         
-    _, err = DB.DBCon.Exec("insert into users (username, password) values ($1, $2)", creds.Username, string(hashedPassword))
+    _, err = DB.DBCon.Exec("INSERT INTO users (username, password) values ($1, $2)", creds.Username, string(hashedPassword))
     if err != nil {
         // If there is any issue with inserting into the database, return a 500 error                                      
         w.WriteHeader(http.StatusInternalServerError)
         return
     }
 
+    // creates the cookie since it does not exist
     session, _ := store.Get(r, "cookie-name")
 
     // Set user as authenticated
