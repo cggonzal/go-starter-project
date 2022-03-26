@@ -9,11 +9,6 @@ import (
     "log"
 )
 
-func success(w http.ResponseWriter, r *http.Request){
-    success_page, _ := os.ReadFile("success.html")
-    w.Write(success_page)
-}
-
 func index(w http.ResponseWriter, r *http.Request){
     landing_page, _ := os.ReadFile("index.html")
     w.Write(landing_page)
