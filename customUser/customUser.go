@@ -1,7 +1,6 @@
 package customUser
 
 import (
-    "fmt"
     "net/http"
     "os"
     "github.com/gorilla/sessions"
@@ -11,18 +10,13 @@ import (
     "starterProject/DB"
 )
 
-// TODO: verify signup, login, and logout flows all work well
-
 var (
     // key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
-    key := []byte(os.GetEnv("SECRET_KEY"))
+    key = []byte(os.Getenv("SECRET_KEY"))
 
-    // set session to end when browser disconnects
-    // docs: https://pkg.go.dev/github.com/gorilla/sessions#CookieStore.MaxAge
-    // https://pkg.go.dev/github.com/gorilla/sessions#Options
-    storeOptions := sessions.Options{MaxAge: 0}
-    store := sessions.NewCookieStore(key, storeOptions)
+    store = sessions.NewCookieStore(key)
 
+    // NOTE: change as needed
     BCRYPT_COST = 8
 )
 
@@ -32,18 +26,32 @@ type Credentials struct {
     Password string
 }
 
+func InitUser(){
+    // set session to end when browser disconnects
+    // docs: https://pkg.go.dev/github.com/gorilla/sessions#CookieStore.MaxAge
+    // https://pkg.go.dev/github.com/gorilla/sessions#Options
+    store.Options = &sessions.Options{MaxAge: 0}
+}
+
+func IsAuthenticated(r *http.Request) bool {
+    session, _ := store.Get(r, "cookie-name")
+    auth, ok := session.Values["authenticated"].(bool)
+
+    if !auth || !ok {
+        return false
+    }
+
+    return true
+}
 
 func Secret(w http.ResponseWriter, r *http.Request) {
-    session, _ := store.Get(r, "cookie-name")
-
-    // Check if user is authenticated
-    if auth, ok := session.Values["authenticated"].(bool); !ok || !auth {
+    if !IsAuthenticated(r){
         http.Error(w, "Forbidden", http.StatusForbidden)
         return
     }
 
-    // Print secret message
-    fmt.Fprintln(w, "Authentication works!")
+    // user is authenticated, write secret message
+    w.Write([]byte("Authentication works!"))
 }
 
 // sign up function handler                                                                                                
@@ -113,10 +121,12 @@ func Login(w http.ResponseWriter, r *http.Request) {
         w.WriteHeader(http.StatusInternalServerError)
         return
     }
-    // Compare the stored hashed password with the hashed version of the password that was received                       
+
+    // Compare the stored hashed password with the hashed version of the password that was received 
     if err = bcrypt.CompareHashAndPassword([]byte(storedCreds.Password), []byte(creds.Password)); err != nil {
         // If the two passwords don't match, return a 401 status                                                           
         w.WriteHeader(http.StatusUnauthorized)
+        w.Write([]byte("Login Error"))
         return
     }
 
@@ -126,7 +136,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
     session.Save(r, w)
 
     // redirect to landing page since credentials are correct
-    http.Redirect(w, r, "/", http.StatusFound)
+    http.Redirect(w, r, "/secret", http.StatusFound)
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
