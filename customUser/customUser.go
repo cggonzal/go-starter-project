@@ -56,6 +56,12 @@ func Secret(w http.ResponseWriter, r *http.Request) {
 
 // sign up function handler                                                                                                
 func Signup(w http.ResponseWriter, r *http.Request){
+    // Redirect requests that are not POST
+    if r.Method != http.MethodPost{
+        http.Redirect(w, r, "/", http.StatusFound)
+        return
+    }
+
     err := r.ParseForm()
     if err != nil {
         w.WriteHeader(http.StatusBadRequest)
@@ -88,6 +94,12 @@ func Signup(w http.ResponseWriter, r *http.Request){
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
+    // Redirect requests that are not POST
+    if r.Method != http.MethodPost{
+        http.Redirect(w, r, "/", http.StatusFound)
+        return
+    }
+
     err := r.ParseForm()
     if err != nil {
         w.WriteHeader(http.StatusBadRequest)
