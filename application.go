@@ -28,14 +28,20 @@ func main() {
     // initialize user options
     customUser.InitUser()
 
-	// start the server on port 8000
-	log.Fatal(http.ListenAndServe(":8000", nil))
+	// start the server on given $PORT
+    PORT := ":" + os.Getenv("PORT")
+	log.Fatal(http.ListenAndServe(PORT, nil))
 }
 
 func initDB(){
 	var err error
 	// Connect to the postgres db
-    DB.DBCon, err = sql.Open("postgres", "user=cgg dbname=mytestdb sslmode=disable") // TODO: change to use environment variables
+    DB_USER := os.Getenv("DB_USER")
+    DB_NAME := os.Getenv("DB_NAME")
+
+    db_con_string := "user=" + DB_USER + " dbname=" + DB_NAME + " sslmode=disable"
+
+    DB.DBCon, err = sql.Open("postgres", db_con_string)
 	if err != nil {
 		panic(err)
 	}
