@@ -28,14 +28,14 @@ func main() {
     // initialize user options
     customUser.InitUser()
 
-	// start the server on given $PORT
+    // start the server on given $PORT
     PORT := ":" + os.Getenv("PORT")
 	log.Fatal(http.ListenAndServe(PORT, nil))
 }
 
 func initDB(){
-	var err error
-	// Connect to the postgres db
+    var err error
+    // Connect to the postgres db
     RDS_USERNAME := os.Getenv("RDS_USERNAME")
     RDS_PASSWORD := os.Getenv("RDS_PASSWORD")
     RDS_DB_NAME := os.Getenv("RDS_DB_NAME")
