@@ -15,7 +15,7 @@ func index(w http.ResponseWriter, r *http.Request){
 }
 
 func main() {
-	// endpoints
+    // endpoints
     http.HandleFunc("/login", customUser.Login)
     http.HandleFunc("/signup", customUser.Signup)
     http.HandleFunc("/logout", customUser.Logout)
