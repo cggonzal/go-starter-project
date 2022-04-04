@@ -30,11 +30,10 @@ func main() {
 
     // start the server on given $PORT
     PORT := ":" + os.Getenv("PORT")
-	log.Fatal(http.ListenAndServe(PORT, nil))
+    log.Fatal(http.ListenAndServe(PORT, nil))
 }
 
 func initDB(){
-    var err error
     // Connect to the postgres db
     RDS_USERNAME := os.Getenv("RDS_USERNAME")
     RDS_PASSWORD := os.Getenv("RDS_PASSWORD")
@@ -44,6 +43,7 @@ func initDB(){
 
     connStr := "user=" + RDS_USERNAME + " dbname=" + RDS_DB_NAME + " sslmode=disable" + " host=" + RDS_HOSTNAME + " port=" + RDS_PORT + " password=" + RDS_PASSWORD
 
+    var err error
     DB.DBCon, err = sql.Open("postgres", connStr)
     if err != nil {
         panic(err)
