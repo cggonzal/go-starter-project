@@ -36,12 +36,15 @@ func main() {
 func initDB(){
 	var err error
 	// Connect to the postgres db
-    DB_USER := os.Getenv("DB_USER")
-    DB_NAME := os.Getenv("DB_NAME")
+    RDS_USERNAME := os.Getenv("RDS_USERNAME")
+    RDS_PASSWORD := os.Getenv("RDS_PASSWORD")
+    RDS_DB_NAME := os.Getenv("RDS_DB_NAME")
+    RDS_HOSTNAME := os.Getenv("RDS_HOSTNAME")
+    RDS_PORT := os.Getenv("RDS_PORT")
 
-    db_con_string := "user=" + DB_USER + " dbname=" + DB_NAME + " sslmode=disable"
+    connStr := "user=" + RDS_USERNAME + " dbname=" + RDS_DB_NAME + " sslmode=disable" + " host=" + RDS_HOSTNAME + " port=" + RDS_PORT + " password=" + RDS_PASSWORD
 
-    DB.DBCon, err = sql.Open("postgres", db_con_string)
+    DB.DBCon, err = sql.Open("postgres", connStr)
 	if err != nil {
 		panic(err)
 	}

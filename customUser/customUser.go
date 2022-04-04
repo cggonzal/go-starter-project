@@ -8,6 +8,7 @@ import (
     "database/sql"
     _ "github.com/lib/pq"
     "starterProject/DB"
+    "log"
 )
 
 var (
@@ -79,6 +80,7 @@ func Signup(w http.ResponseWriter, r *http.Request){
     if err != nil {
         // If there is any issue with inserting into the database, return a 500 error                                      
         w.WriteHeader(http.StatusInternalServerError)
+        log.Print("Error inserting into database:", err)
         return
     }
 
