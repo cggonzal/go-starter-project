@@ -45,7 +45,7 @@ func initDB(){
     connStr := "user=" + RDS_USERNAME + " dbname=" + RDS_DB_NAME + " sslmode=disable" + " host=" + RDS_HOSTNAME + " port=" + RDS_PORT + " password=" + RDS_PASSWORD
 
     DB.DBCon, err = sql.Open("postgres", connStr)
-	if err != nil {
-		panic(err)
-	}
+    if err != nil {
+        panic(err)
+    }
 }
