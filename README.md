@@ -8,7 +8,13 @@ run `go run main.go` then go to `http://localhost:8000/` to get started
 contains the code that does user authentication
 
 ## Testing
-run the following in the root directory:
+Open a terminal window and run the following from the root directory:
+```
+source local_env_vars.sh
+go run application.go
+```
+
+Open a second terminal window and run:
 ```
 go run tests/main.go
 ```
