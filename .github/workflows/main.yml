@@ -1,0 +1,43 @@
+# This is a basic workflow to help you get started with Actions
+
+name: Deploy to elastic beanstalk
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  push:
+    branches: [ main ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v3
+
+      - name: Deploy to aws using elastic beanstalk
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          # set up aws credentials
+          mkdir ~/.aws
+          echo [profile eb-cli] > ~/.aws/config
+          echo aws_access_key_id=$AWS_ACCESS_KEY_ID >> ~/.aws/config
+          echo aws_secret_access_key=$AWS_SECRET_ACCESS_KEY >> ~/.aws/config
+          
+          # install dependencies
+          python -m pip install virtualenv
+          python -m pip install awsebcli --user
+          export PATH="~/.local/bin:$PATH"
+
+          # deploy
+          eb deploy full-eb-test-main
