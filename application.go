@@ -1,37 +1,25 @@
 package main
 
 import (
-    "database/sql"
     "starterProject/DB"
     "starterProject/customUser"
+    "starterProject/templates"
+    "database/sql"
     "os"
     "net/http"
     "log"
 )
 
 func index(w http.ResponseWriter, r *http.Request){
-    landing_page, _ := os.ReadFile("index.html")
+    landing_page, _ := os.ReadFile("static/index.html")
     w.Write(landing_page)
 }
 
-func main() {
-    // endpoints
-    http.HandleFunc("/login", customUser.Login)
-    http.HandleFunc("/signup", customUser.Signup)
-    http.HandleFunc("/logout", customUser.Logout)
-    http.HandleFunc("/secret", customUser.Secret)
-    http.HandleFunc("/", index)
-
-    // initialize database connection
-    initDB()
-
-    // initialize user options
-    customUser.InitUser()
-
-    // start the server on given $PORT
-    PORT := ":" + os.Getenv("PORT")
-    log.Fatal(http.ListenAndServe(PORT, nil))
+func about(w http.ResponseWriter, r *http.Request){
+    data := templates.AboutData{UserID: "user id", UserImage: "/static/images/test.jpg"}
+    templates.AboutTemplate.Execute(w, data)
 }
+
 
 func initDB(){
     // Connect to the postgres db
@@ -48,4 +36,28 @@ func initDB(){
     if err != nil {
         panic(err)
     }
+}
+
+func main() {
+    // endpoints
+    http.HandleFunc("/", index)
+    http.HandleFunc("/about", about)
+    http.HandleFunc("/login", customUser.Login)
+    http.HandleFunc("/signup", customUser.Signup)
+    http.HandleFunc("/logout", customUser.Logout)
+    http.HandleFunc("/secret", customUser.Secret)
+
+    // initialize database connection
+    initDB()
+
+    // initialize user options
+    customUser.InitUser()
+
+    // initialize templates
+    templates.InitTemplates()
+
+    // start the server on given $PORT
+    PORT := ":" + os.Getenv("PORT")
+    log.Print("started app on port ", PORT)
+    log.Fatal(http.ListenAndServe(PORT, nil))
 }
