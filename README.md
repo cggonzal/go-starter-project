@@ -10,7 +10,7 @@ contains the code that does user authentication
 ## Testing
 Open a terminal window and run the following from the root directory:
 ```
-source local_env_vars.sh
+source local_env_vars.sh  # manually create a database that matches the variables in this script on first setup
 go run application.go
 ```
 
