@@ -24,7 +24,7 @@ func main() {
     }
 
     // try to login with credentials that don't exist
-    fakeCreds := url.Values{"username": {"kbjsdytp2oiqw423ejdas@gmail.com"}, "password": {"pass"}}
+    fakeCreds := url.Values{"email": {"kbjsdytp2oiqw423ejdas@gmail.com"}, "password": {"pass"}}
     resp, _ = http.PostForm("http://127.0.0.1:8000/login", fakeCreds)
     if resp.StatusCode != http.StatusUnauthorized{
         log.Fatal("expected status 401 got status: ", resp.StatusCode)
@@ -37,7 +37,7 @@ func main() {
     }
 
     // user credentials to be tested
-    creds := url.Values{"username": {"testuser@gmail.com"}, "password": {"testpass"}}
+    creds := url.Values{"email": {"testuser@gmail.com"}, "password": {"testpass"}}
 
     // create client so it stores cookies that are used for authentication
     jar, _ := cookiejar.New(nil)

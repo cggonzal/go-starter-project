@@ -23,7 +23,7 @@ var (
 
 // user credentials
 type Credentials struct {
-    Username string
+    Email string
     Password string
 }
 
@@ -70,13 +70,13 @@ func Signup(w http.ResponseWriter, r *http.Request){
     }
 
     // store the request body into a new `Credentials` instance                                                 
-    creds := &Credentials{Username: r.PostFormValue("username"), Password: r.PostFormValue("password")}
+    creds := &Credentials{Email: r.PostFormValue("email"), Password: r.PostFormValue("password")}
 
     // hash the password using the bcrypt algorithm                                                               
     hashedPassword, err := bcrypt.GenerateFromPassword([]byte(creds.Password), BCRYPT_COST)
 
-    // Next, insert the username, along with the hashed password into the database                                         
-    _, err = DB.DBCon.Exec("INSERT INTO users (username, password) values ($1, $2)", creds.Username, string(hashedPassword))
+    // Next, insert the email, along with the hashed password into the database                                         
+    _, err = DB.DBCon.Exec("INSERT INTO users (email, password) values ($1, $2)", creds.Email, string(hashedPassword))
     if err != nil {
         // If there is any issue with inserting into the database, return a 500 error                                      
         w.WriteHeader(http.StatusInternalServerError)
@@ -110,10 +110,10 @@ func Login(w http.ResponseWriter, r *http.Request) {
     }
 
     // store the request body into a new `Credentials` instance                                                 
-    creds := &Credentials{Username: r.PostFormValue("username"), Password: r.PostFormValue("password")}
+    creds := &Credentials{Email: r.PostFormValue("email"), Password: r.PostFormValue("password")}
 
-    // Get the existing entry present in the database for the given username                                               
-    result := DB.DBCon.QueryRow("SELECT password FROM users WHERE username=$1", creds.Username)
+    // Get the existing entry present in the database for the given email                                               
+    result := DB.DBCon.QueryRow("SELECT password FROM users WHERE email=$1", creds.Email)
     if err != nil {
         // If there is an issue with the database, return a 500 error                                                      
         w.WriteHeader(http.StatusInternalServerError)
@@ -126,7 +126,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
     // Store the obtained password in `storedCreds`                                                                        
     err = result.Scan(&storedCreds.Password)
     if err != nil {
-        // If an entry with the username does not exist, send an "Unauthorized"(401) status                                
+        // If an entry with the email does not exist, send an "Unauthorized"(401) status                                
         if err == sql.ErrNoRows {
             w.WriteHeader(http.StatusUnauthorized)
             return
