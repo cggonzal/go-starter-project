@@ -2,7 +2,7 @@ package main
 
 import (
 	"database/sql"
-        "fmt"
+	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -29,9 +29,8 @@ func initDB() {
 	RDS_HOSTNAME := os.Getenv("RDS_HOSTNAME")
 	RDS_PORT := os.Getenv("RDS_PORT")
 
-        connStr := fmt.Sprintf("user=%s dbname=%s sslmode=disable host=%s port=%s password=%s", 
-                                RDS_USERNAME, RDS_DB_NAME, RDS_HOSTNAME, RDS_PORT, RDS_PASSWORD) 
-
+	connStr := fmt.Sprintf("user=%s dbname=%s sslmode=disable host=%s port=%s password=%s",
+		RDS_USERNAME, RDS_DB_NAME, RDS_HOSTNAME, RDS_PORT, RDS_PASSWORD)
 
 	var err error
 	DB.DBCon, err = sql.Open("postgres", connStr)
