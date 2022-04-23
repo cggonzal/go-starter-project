@@ -1,9 +1,9 @@
 package DB
 
 import (
-    "database/sql"
+	"database/sql"
 )
 
 var (
-    DBCon *sql.DB
+	DBCon *sql.DB
 )
