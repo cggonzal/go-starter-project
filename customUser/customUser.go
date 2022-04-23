@@ -76,7 +76,8 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(creds.Password), BCRYPT_COST)
 
 	// Next, insert the email, along with the hashed password into the database
-	_, err = DB.DBCon.Exec("INSERT INTO users (email, password) values ($1, $2)", creds.Email, string(hashedPassword))
+	_, err = DB.DBCon.Exec("INSERT INTO users (email, password) values ($1, $2)", 
+                                creds.Email, string(hashedPassword))
 	if err != nil {
 		// If there is any issue with inserting into the database, return a 500 error
 		// TODO: handle case where email already exists in database
@@ -115,11 +116,6 @@ func Login(w http.ResponseWriter, r *http.Request) {
 
 	// Get the existing entry present in the database for the given email
 	result := DB.DBCon.QueryRow("SELECT password FROM users WHERE email=$1", creds.Email)
-	if err != nil {
-		// If there is an issue with the database, return a 500 error
-		w.WriteHeader(http.StatusInternalServerError)
-		return
-	}
 
 	// We create another instance of `Credentials` to store the credentials we get from the database
 	storedCreds := &Credentials{}
