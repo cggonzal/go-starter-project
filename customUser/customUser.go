@@ -12,7 +12,7 @@ import (
 )
 
 var (
-	// key must be 16, 24 or 32 bytes long (AES-128, AES-192 or AES-256)
+	// key must be 16, 24, or 32 bytes long (AES-128, AES-192, or AES-256)
 	key = []byte(os.Getenv("SECRET_KEY"))
 
 	store = sessions.NewCookieStore(key)
@@ -76,8 +76,8 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(creds.Password), BCRYPT_COST)
 
 	// Next, insert the email, along with the hashed password into the database
-	_, err = DB.DBCon.Exec("INSERT INTO users (email, password) values ($1, $2)", 
-                                creds.Email, string(hashedPassword))
+	_, err = DB.DBCon.Exec("INSERT INTO users (email, password) values ($1, $2)",
+		creds.Email, string(hashedPassword))
 	if err != nil {
 		// If there is any issue with inserting into the database, return a 500 error
 		// TODO: handle case where email already exists in database

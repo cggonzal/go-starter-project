@@ -7,8 +7,8 @@ import (
 
 /* NOTE: in order to add a new template there are 3 steps
    1. Add the name to the list of var
-   2. Add the file(s) that get parsed to the init templates function using ParseFiles() as shown below
-   3. Create a new struct for the data that gets passed into the template
+   2. Create a new struct for the data that gets passed into the template
+   3. Add the file(s) that get parsed to the init templates function using ParseFiles() as shown below
 */
 
 // 1.
