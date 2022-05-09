@@ -16,6 +16,7 @@ import (
 var (
 	AboutTemplate *template.Template
 	HomeTemplate  *template.Template
+	IndexTemplate *template.Template
 )
 
 // 2.
@@ -30,6 +31,10 @@ type HomeData struct {
 	UserImage string
 }
 
+type IndexData struct {
+	PasswordIncorrect bool
+}
+
 // 3.
 // initialize templates. Store them in global variables so that files don't have to be parsed on every request
 func InitTemplates() {
@@ -42,6 +47,11 @@ func InitTemplates() {
 	}
 
 	AboutTemplate, err = template.ParseFiles("templates/base.html", "templates/about.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	IndexTemplate, err = template.ParseFiles("templates/index.html")
 	if err != nil {
 		log.Fatal(err)
 	}

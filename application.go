@@ -12,8 +12,8 @@ import (
 )
 
 func index(w http.ResponseWriter, r *http.Request) {
-	landing_page, _ := os.ReadFile("static/index.html")
-	w.Write(landing_page)
+	data := templates.IndexData{PasswordIncorrect: false}
+	templates.IndexTemplate.Execute(w, data)
 }
 
 func about(w http.ResponseWriter, r *http.Request) {

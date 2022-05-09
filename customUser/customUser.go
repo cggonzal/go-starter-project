@@ -2,13 +2,15 @@ package customUser
 
 import (
 	"database/sql"
-	"github.com/gorilla/sessions"
-	_ "github.com/lib/pq"
-	"golang.org/x/crypto/bcrypt"
 	"log"
 	"net/http"
 	"os"
 	"starterProject/DB"
+	"starterProject/templates"
+
+	"github.com/gorilla/sessions"
+	_ "github.com/lib/pq"
+	"golang.org/x/crypto/bcrypt"
 )
 
 var (
@@ -35,7 +37,7 @@ func InitUser() {
 }
 
 func IsAuthenticated(r *http.Request) bool {
-	session, _ := store.Get(r, "cookie-name")
+	session, _ := store.Get(r, "session-cookie")
 	auth, ok := session.Values["authenticated"].(bool)
 
 	if !auth || !ok {
@@ -87,7 +89,7 @@ func Signup(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// creates the cookie since it does not exist
-	session, _ := store.Get(r, "cookie-name")
+	session, _ := store.Get(r, "session-cookie")
 
 	// Set user as authenticated
 	session.Values["authenticated"] = true
@@ -126,6 +128,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		// If an entry with the email does not exist, send an "Unauthorized"(401) status
 		if err == sql.ErrNoRows {
 			w.WriteHeader(http.StatusUnauthorized)
+			w.Write([]byte("An account with this email does not exist"))
 			return
 		}
 		// If the error is of any other type, send a 500 status
@@ -137,12 +140,13 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if err = bcrypt.CompareHashAndPassword([]byte(storedCreds.Password), []byte(creds.Password)); err != nil {
 		// If the two passwords don't match, return a 401 status
 		w.WriteHeader(http.StatusUnauthorized)
-		w.Write([]byte("Login Error"))
+		data := templates.IndexData{PasswordIncorrect: true}
+		templates.IndexTemplate.Execute(w, data)
 		return
 	}
 
 	// If we reach this point, that means the users password was correct, so set the user as authenticated
-	session, _ := store.Get(r, "cookie-name")
+	session, _ := store.Get(r, "session-cookie")
 	session.Values["authenticated"] = true
 	session.Save(r, w)
 
@@ -151,7 +155,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
-	session, _ := store.Get(r, "cookie-name")
+	session, _ := store.Get(r, "session-cookie")
 
 	// Revoke users authentication
 	session.Values["authenticated"] = false
