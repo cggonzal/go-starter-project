@@ -2,7 +2,7 @@
 
 Contains boilerplate code that supports user authentication through the signup, login, and logout endpoints. Also contains testing infrastructure for those endpoints.
 
-run `export PORT=8000` then `go run application.go` then go to `http://localhost:8000/` to get started
+run `source local_env_vars.sh` then `go run application.go` then go to `http://localhost:8000/` to get started
 
 ## CustomUsers
 contains the code that does user authentication
