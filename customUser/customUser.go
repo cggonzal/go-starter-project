@@ -58,10 +58,11 @@ func Secret(w http.ResponseWriter, r *http.Request) {
 }
 
 // sign up function handler
-func Signup(w http.ResponseWriter, r *http.Request) {
-	// Redirect requests that are not POST
+func SignUp(w http.ResponseWriter, r *http.Request) {
+	// serve empty form
 	if r.Method != http.MethodPost {
-		http.Redirect(w, r, "/", http.StatusFound)
+		data := templates.LoginData{PasswordIncorrect: false}
+		templates.SignUpTemplate.Execute(w, data)
 		return
 	}
 
@@ -140,8 +141,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	if err = bcrypt.CompareHashAndPassword([]byte(storedCreds.Password), []byte(creds.Password)); err != nil {
 		// If the two passwords don't match, return a 401 status
 		w.WriteHeader(http.StatusUnauthorized)
-		data := templates.IndexData{PasswordIncorrect: true}
-		templates.IndexTemplate.Execute(w, data)
+		data := templates.LoginData{PasswordIncorrect: true}
+		templates.LoginTemplate.Execute(w, data)
 		return
 	}
 

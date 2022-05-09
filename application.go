@@ -12,8 +12,11 @@ import (
 )
 
 func index(w http.ResponseWriter, r *http.Request) {
-	data := templates.IndexData{PasswordIncorrect: false}
-	templates.IndexTemplate.Execute(w, data)
+	landingPage, err := os.ReadFile("static/index.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+	w.Write(landingPage)
 }
 
 func about(w http.ResponseWriter, r *http.Request) {
@@ -44,7 +47,7 @@ func main() {
 	http.HandleFunc("/", index)
 	http.HandleFunc("/about", about)
 	http.HandleFunc("/login", customUser.Login)
-	http.HandleFunc("/signup", customUser.Signup)
+	http.HandleFunc("/signup", customUser.SignUp)
 	http.HandleFunc("/logout", customUser.Logout)
 	http.HandleFunc("/secret", customUser.Secret)
 

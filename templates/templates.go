@@ -14,9 +14,10 @@ import (
 // 1.
 // template variable names
 var (
-	AboutTemplate *template.Template
-	HomeTemplate  *template.Template
-	IndexTemplate *template.Template
+	AboutTemplate  *template.Template
+	HomeTemplate   *template.Template
+	SignUpTemplate *template.Template
+	LoginTemplate  *template.Template
 )
 
 // 2.
@@ -31,7 +32,7 @@ type HomeData struct {
 	UserImage string
 }
 
-type IndexData struct {
+type LoginData struct {
 	PasswordIncorrect bool
 }
 
@@ -51,7 +52,12 @@ func InitTemplates() {
 		log.Fatal(err)
 	}
 
-	IndexTemplate, err = template.ParseFiles("templates/index.html")
+	SignUpTemplate, err = template.ParseFiles("templates/signup.html")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	LoginTemplate, err = template.ParseFiles("templates/login.html")
 	if err != nil {
 		log.Fatal(err)
 	}
