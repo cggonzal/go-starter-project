@@ -101,9 +101,10 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 }
 
 func Login(w http.ResponseWriter, r *http.Request) {
-	// Redirect requests that are not POST
+	// serve form
 	if r.Method != http.MethodPost {
-		http.Redirect(w, r, "/", http.StatusFound)
+		data := templates.LoginData{PasswordIncorrect: false}
+		templates.LoginTemplate.Execute(w, data)
 		return
 	}
 
