@@ -49,6 +49,7 @@ func main() {
 	http.HandleFunc("/login", customUser.Login)
 	http.HandleFunc("/signup", customUser.SignUp)
 	http.HandleFunc("/logout", customUser.Logout)
+        http.HandleFunc("/delete", customUser.Delete)
 	http.HandleFunc("/secret", customUser.Secret)
 
 	// initialize database connection

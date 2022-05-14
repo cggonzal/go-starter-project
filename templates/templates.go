@@ -18,6 +18,7 @@ var (
 	HomeTemplate   *template.Template
 	SignUpTemplate *template.Template
 	LoginTemplate  *template.Template
+        DeleteTemplate *template.Template
 )
 
 // 2.
@@ -34,6 +35,10 @@ type HomeData struct {
 
 type LoginData struct {
 	PasswordIncorrect bool
+}
+
+type DeleteData struct {
+        UserDoesNotExist bool
 }
 
 // 3.
@@ -62,4 +67,8 @@ func InitTemplates() {
 		log.Fatal(err)
 	}
 
+        DeleteTemplate, err = template.ParseFiles("templates/delete.html")
+	if err != nil {
+		log.Fatal(err)
+	}
 }
