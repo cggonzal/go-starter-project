@@ -1,17 +1,17 @@
 package main
 
 import (
-        "os"
 	"log"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
+	"os"
 )
 
 func main() {
-        logger := log.New(os.Stdout, "logger: ", log.LstdFlags | log.Llongfile)
-	
-        resp, _ := http.Get("http://127.0.0.1:8000/")
+	logger := log.New(os.Stdout, "logger: ", log.LstdFlags|log.Llongfile)
+
+	resp, _ := http.Get("http://127.0.0.1:8000/")
 	if resp.StatusCode != http.StatusOK {
 		logger.Fatal("expected status 200 got status ", resp.StatusCode)
 	}
@@ -63,7 +63,7 @@ func main() {
 	if resp.StatusCode != http.StatusOK {
 		logger.Fatal("expected status 200 got status: ", resp.StatusCode)
 	}
-        
+
 	// log user out
 	resp, _ = http.Get("http://127.0.0.1:8000/logout")
 	if resp.StatusCode != http.StatusOK {
@@ -71,13 +71,13 @@ func main() {
 	}
 
 	// delete user that was created
-       	resp, _ = client.PostForm("http://127.0.0.1:8000/delete", creds)
+	resp, _ = client.PostForm("http://127.0.0.1:8000/delete", creds)
 	if resp.StatusCode != http.StatusOK {
 		logger.Fatal("expected status 200 got status: ", resp.StatusCode)
 	}
 
-        // verify that user was deleted
-        resp, _ = client.PostForm("http://127.0.0.1:8000/login", creds)
+	// verify that user was deleted
+	resp, _ = client.PostForm("http://127.0.0.1:8000/login", creds)
 	if resp.StatusCode != http.StatusUnauthorized {
 		logger.Fatal("expected status 401 got status: ", resp.StatusCode)
 	}

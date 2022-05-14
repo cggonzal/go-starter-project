@@ -167,7 +167,7 @@ func Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 func Delete(w http.ResponseWriter, r *http.Request) {
-       	// serve form
+	// serve form
 	if r.Method != http.MethodPost {
 		data := templates.DeleteData{UserDoesNotExist: false}
 		templates.DeleteTemplate.Execute(w, data)
@@ -177,25 +177,25 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	err := r.ParseForm()
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-                data := templates.DeleteData{UserDoesNotExist: false}
-                templates.DeleteTemplate.Execute(w, data)
+		data := templates.DeleteData{UserDoesNotExist: false}
+		templates.DeleteTemplate.Execute(w, data)
 		return
 	}
 
 	// store the request body into a new `Credentials` instance
 	creds := &Credentials{Email: r.PostFormValue("email"), Password: r.PostFormValue("password")}
-        
-        // attempt to delete user
-        _, err = DB.DBCon.Exec("DELETE FROM users WHERE email=$1", creds.Email)
-        
-        if err != nil {
-          log.Print("ERROR: Encountered the following error when deleting user ", creds.Email, ":", err)
-	  w.WriteHeader(http.StatusBadRequest)
-          data := templates.DeleteData{UserDoesNotExist: true}
-          templates.DeleteTemplate.Execute(w, data)
-	  return
-        }
-        
-        // delete succeeded, force user to logout
-        http.Redirect(w, r, "/logout", http.StatusFound)
+
+	// attempt to delete user
+	_, err = DB.DBCon.Exec("DELETE FROM users WHERE email=$1", creds.Email)
+
+	if err != nil {
+		log.Print("ERROR: Encountered the following error when deleting user ", creds.Email, ":", err)
+		w.WriteHeader(http.StatusBadRequest)
+		data := templates.DeleteData{UserDoesNotExist: true}
+		templates.DeleteTemplate.Execute(w, data)
+		return
+	}
+
+	// delete succeeded, force user to logout
+	http.Redirect(w, r, "/logout", http.StatusFound)
 }
