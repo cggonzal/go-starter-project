@@ -11,6 +11,10 @@ import (
 	"starterProject/templates"
 )
 
+func index(w http.ResponseWriter, r *http.Request) {
+	http.ServeFile(w, r, "./static/index.html")
+}
+
 func about(w http.ResponseWriter, r *http.Request) {
 	data := templates.AboutData{UserID: "user id", UserImage: "/static/images/test.jpg"}
 	templates.AboutTemplate.Execute(w, data)
@@ -37,7 +41,8 @@ func initDB() {
 func main() {
 	// serve static files
 	http.Handle("/static", http.FileServer(http.Dir("./static")))
-	
+	http.HandleFunc("/", index)
+
 	// endpoints
 	http.HandleFunc("/about", about)
 	http.HandleFunc("/login", customUser.Login)
