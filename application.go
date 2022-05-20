@@ -39,9 +39,11 @@ func initDB() {
 }
 
 func main() {
+	// serve landing page
+	http.HandleFunc("/", index)
+
 	// serve static files
 	http.Handle("/static/", http.FileServer(http.Dir(".")))
-	http.HandleFunc("/", index)
 
 	// endpoints
 	http.HandleFunc("/about", about)
