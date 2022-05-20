@@ -40,7 +40,7 @@ func initDB() {
 
 func main() {
 	// serve static files
-	http.Handle("/static/", http.FileServer(http.Dir("./static")))
+	http.Handle("/static/", http.FileServer(http.Dir("")))
 	http.HandleFunc("/", index)
 
 	// endpoints
