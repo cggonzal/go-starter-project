@@ -1,7 +1,6 @@
 package main
 
 import (
-	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
@@ -20,24 +19,6 @@ func about(w http.ResponseWriter, r *http.Request) {
 	templates.AboutTemplate.Execute(w, data)
 }
 
-func initDB() {
-	// Connect to the postgres db
-	RDS_USERNAME := os.Getenv("RDS_USERNAME")
-	RDS_PASSWORD := os.Getenv("RDS_PASSWORD")
-	RDS_DB_NAME := os.Getenv("RDS_DB_NAME")
-	RDS_HOSTNAME := os.Getenv("RDS_HOSTNAME")
-	RDS_PORT := os.Getenv("RDS_PORT")
-
-	connStr := fmt.Sprintf("user=%s dbname=%s sslmode=disable host=%s port=%s password=%s",
-		RDS_USERNAME, RDS_DB_NAME, RDS_HOSTNAME, RDS_PORT, RDS_PASSWORD)
-
-	var err error
-	DB.DBCon, err = sql.Open("postgres", connStr)
-	if err != nil {
-		panic(err)
-	}
-}
-
 func main() {
 	// serve landing page
 	http.HandleFunc("/", index)
@@ -54,7 +35,7 @@ func main() {
 	http.HandleFunc("/secret", customUser.Secret)
 
 	// initialize database connection
-	initDB()
+	DB.InitDB()
 
 	// initialize user options
 	customUser.InitUser()
