@@ -52,6 +52,12 @@ func main() {
 		logger.Fatal("expected status 200 got status: ", resp.StatusCode)
 	}
 
+	// test signing up user again, should fail since emails need to be unique
+	resp, _ = client.PostForm("http://127.0.0.1:8000/signup", creds)
+	if resp.StatusCode != http.StatusForbidden {
+		logger.Fatal("expected status 403 got status: ", resp.StatusCode)
+	}
+
 	// test logging in recently created user
 	resp, _ = client.PostForm("http://127.0.0.1:8000/login", creds)
 	if resp.StatusCode != http.StatusOK {
@@ -81,8 +87,6 @@ func main() {
 	if resp.StatusCode != http.StatusUnauthorized {
 		logger.Fatal("expected status 401 got status: ", resp.StatusCode)
 	}
-
-	// TODO: make test that signs up a user twice and check that the second sign up fails since emails need to be unique
 
 	logger.Print("All tests passed!")
 }
