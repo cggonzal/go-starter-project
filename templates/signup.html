@@ -11,6 +11,8 @@
   <input type="text" name="password" value="Doe"><br><br>
   <input type="submit" value="Submit">
 </form> 
-
+{{if .UserAlreadyExists}}
+<h3 style="color:red;">User with that email already exists!</h3>
+{{end}}
 </body>
 </html>

@@ -41,6 +41,10 @@ type DeleteData struct {
 	UserDoesNotExist bool
 }
 
+type SignUpData struct {
+	UserAlreadyExists bool
+}
+
 // 3.
 // initialize templates. Store them in global variables so that files don't have to be parsed on every request
 func InitTemplates() {

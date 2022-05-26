@@ -61,7 +61,7 @@ func Secret(w http.ResponseWriter, r *http.Request) {
 func SignUp(w http.ResponseWriter, r *http.Request) {
 	// serve empty form
 	if r.Method != http.MethodPost {
-		data := templates.LoginData{PasswordIncorrect: false}
+		data := templates.SignUpData{UserAlreadyExists: false}
 		templates.SignUpTemplate.Execute(w, data)
 		return
 	}
@@ -75,7 +75,19 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 	// store the request body into a new `Credentials` instance
 	creds := &Credentials{Email: r.PostFormValue("email"), Password: r.PostFormValue("password")}
 
-	// hash the password using the bcrypt algorithm
+	// If the email already exists, prevent sign up
+	storedCreds := &Credentials{}
+	result := DB.DBCon.QueryRow("SELECT email FROM users WHERE email=$1", creds.Email)
+	err = result.Scan(&storedCreds.Email)
+	if err != sql.ErrNoRows {
+		// user with this email already exists
+		w.WriteHeader(http.StatusForbidden)
+		data := templates.SignUpData{UserAlreadyExists: true}
+		templates.SignUpTemplate.Execute(w, data)
+		return
+	}
+
+	// hash the password using bcrypt
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(creds.Password), BCRYPT_COST)
 
 	// Next, insert the email, along with the hashed password into the database
