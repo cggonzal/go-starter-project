@@ -40,7 +40,7 @@ func main() {
 	}
 
 	// user credentials to be tested
-	creds := url.Values{"email": {"testuser12345@gmail.com"}, "password": {"testpass"}}
+	creds := url.Values{"email": {"testuser123456789@gmail.com"}, "password": {"testpass"}}
 
 	// create client so it stores cookies that are used for authentication
 	jar, _ := cookiejar.New(nil)
@@ -71,9 +71,15 @@ func main() {
 	}
 
 	// log user out
-	resp, _ = http.Get("http://127.0.0.1:8000/logout")
+	resp, _ = client.Get("http://127.0.0.1:8000/logout")
 	if resp.StatusCode != http.StatusOK {
 		logger.Fatal("expected status 200 got status: ", resp.StatusCode)
+	}
+
+	// verify user can't access secret after logout
+	resp, _ = client.Get("http://127.0.0.1:8000/secret")
+	if resp.StatusCode != http.StatusForbidden {
+		logger.Fatal("expected status 403 got status: ", resp.StatusCode)
 	}
 
 	// delete user that was created
