@@ -95,7 +95,6 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		creds.Email, string(hashedPassword))
 	if err != nil {
 		// If there is any issue with inserting into the database, return a 500 error
-		// TODO: handle case where email already exists in database
 		w.WriteHeader(http.StatusInternalServerError)
 		log.Print("Error inserting into database:", err)
 		return
