@@ -150,7 +150,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Compare the stored hashed password with the hashed version of the password that was received
-	if err = bcrypt.CompareHashAndPassword([]byte(storedCreds.Password), []byte(creds.Password)); err != nil {
+	err = bcrypt.CompareHashAndPassword([]byte(storedCreds.Password), []byte(creds.Password))
+	if err != nil {
 		// If the two passwords don't match, return a 401 status
 		w.WriteHeader(http.StatusUnauthorized)
 		data := templates.LoginData{PasswordIncorrect: true}
