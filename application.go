@@ -44,7 +44,7 @@ func main() {
 	templates.InitTemplates()
 
 	// start the server on given $PORT
-	log.Print("starting app on port ", os.Getenv("PORT"))
 	PORT := fmt.Sprintf(":%s", os.Getenv("PORT"))
+	log.Print("starting app on port ", PORT)
 	log.Fatal(http.ListenAndServe(PORT, nil))
 }
