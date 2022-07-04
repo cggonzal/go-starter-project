@@ -41,13 +41,21 @@ func handleMigrations() {
 	}
 	numMigrationFiles := len(files)
 	if numMigrationFiles > lastMigration {
+		migrationTransaction := "BEGIN;"
 		for i := 0; i < numMigrationFiles-lastMigration; i += 1 {
 			migrationFileToApply := "migration_" + strconv.Itoa(lastMigration+i+1) + ".sql"
 			migrationStatement, err := os.ReadFile(migrationFileToApply)
 			if err != nil {
 				log.Fatal("Error reading migration file... Exiting...", string(migrationStatement))
 			}
-			_, err = DBCon.Exec(string(migrationStatement))
+			// append statement to transaction
+			migrationTransaction += string(migrationStatement)
+		}
+
+		migrationTransaction += "COMMIT;"
+		_, err = DBCon.Exec(string(migrationTransaction))
+		if err != nil {
+			log.Fatal("Error with executing migrations... Exiting...")
 		}
 	}
 
@@ -86,6 +94,6 @@ func InitDB() {
 		log.Fatal("Error connecting to the DB... Exiting...")
 	}
 
-	handleMigrations()
+	// handleMigrations()
 
 }
