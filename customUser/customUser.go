@@ -9,7 +9,6 @@ import (
 	"starterProject/templates"
 
 	"github.com/gorilla/sessions"
-	_ "github.com/lib/pq"
 	"golang.org/x/crypto/bcrypt"
 )
 

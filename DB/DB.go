@@ -6,6 +6,8 @@ import (
 	"log"
 	"os"
 	"strconv"
+
+	_ "github.com/lib/pq"
 )
 
 var (
@@ -95,13 +97,13 @@ func InitDB() {
 	var err error
 	DBCon, err = sql.Open("postgres", connStr)
 	if err != nil {
-		log.Fatal("Error connecting to the DB... Exiting...")
+		log.Fatal("Error opening the DB... Exiting...")
 	}
 
 	// check that the database can be connected to
 	err = DBCon.Ping()
 	if err != nil {
-		log.Fatal("Error connecting to the database... Exiting...", err)
+		log.Fatal("Error pinging the DB... Exiting...", err)
 	}
 
 	// handleMigrations()
