@@ -63,6 +63,9 @@ func handleMigrations() {
 			}
 			// add statement to transaction
 			_, err = tx.Exec(string(migrationStatement))
+			if err != nil {
+				logger.Logger.Fatal("Error executing migration statement... Exiting...", err)
+			}
 		}
 
 		// update last_applied_migration_value
