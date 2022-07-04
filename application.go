@@ -7,6 +7,7 @@ import (
 	"os"
 	"starterProject/DB"
 	"starterProject/customUser"
+	"starterProject/logger"
 	"starterProject/templates"
 )
 
@@ -33,6 +34,9 @@ func main() {
 	http.HandleFunc("/logout", customUser.Logout)
 	http.HandleFunc("/delete", customUser.Delete)
 	http.HandleFunc("/secret", customUser.Secret)
+
+	// initialize Logger, this has to come before all other initializations since they use the logger
+	logger.Logger = logger.InitLogger()
 
 	// initialize database connection
 	DB.InitDB()
