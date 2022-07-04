@@ -23,6 +23,7 @@ func handleMigrations() {
 	if err != nil {
 		// migrations table is empty, create the single row in the table and set its value to 0
 		if err == sql.ErrNoRows {
+			lastMigration = 0
 			_, err = DBCon.Exec("INSERT INTO migration (last_applied_migration) VALUES (0)")
 			if err != nil {
 				log.Fatal("Could not insert into the migrations table... Exiting...", err)
@@ -41,7 +42,10 @@ func handleMigrations() {
 	}
 	numMigrationFiles := len(files)
 	if numMigrationFiles > lastMigration {
+		// start transaction
 		migrationTransaction := "BEGIN;"
+
+		// put all new sql statements into the transaction
 		for i := 0; i < numMigrationFiles-lastMigration; i += 1 {
 			migrationFileToApply := "migration_" + strconv.Itoa(lastMigration+i+1) + ".sql"
 			migrationStatement, err := os.ReadFile(migrationFileToApply)
