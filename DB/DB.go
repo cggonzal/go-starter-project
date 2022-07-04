@@ -52,17 +52,17 @@ func handleMigrations() {
 			migrationTransaction += string(migrationStatement)
 		}
 
+		// update last_applied_migration_value
+		migrationTransaction += "UPDATE migration SET last_applied_migration = " + strconv.Itoa(numMigrationFiles) + ";"
+
+		// add final commit statement
 		migrationTransaction += "COMMIT;"
+
+		// execute transaction
 		_, err = DBCon.Exec(string(migrationTransaction))
 		if err != nil {
 			log.Fatal("Error with executing migrations... Exiting...")
 		}
-	}
-
-	// update last_applied_migration value
-	_, err = DBCon.Exec("UPDATE migration SET last_applied_migration = $1", numMigrationFiles)
-	if err != nil {
-		log.Fatal("Error updating last_applied_migration value... Exiting...", err)
 	}
 
 	// verify that there is only one row in the migrations table
