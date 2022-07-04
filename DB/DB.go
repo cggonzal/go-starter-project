@@ -94,6 +94,12 @@ func InitDB() {
 		log.Fatal("Error connecting to the DB... Exiting...")
 	}
 
+	// check that the database can be connected to
+	err = DBCon.Ping()
+	if err != nil {
+		log.Fatal("Error connecting to the database... Exiting...", err)
+	}
+
 	// handleMigrations()
 
 }
