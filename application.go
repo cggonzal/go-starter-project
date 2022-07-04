@@ -2,7 +2,6 @@ package main
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"starterProject/DB"
@@ -49,6 +48,6 @@ func main() {
 
 	// start the server on given $PORT
 	PORT := fmt.Sprintf(":%s", os.Getenv("PORT"))
-	log.Print("starting app on port ", PORT)
-	log.Fatal(http.ListenAndServe(PORT, nil))
+	logger.Logger.Print("starting app on port ", PORT)
+	logger.Logger.Fatal(http.ListenAndServe(PORT, nil))
 }

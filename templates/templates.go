@@ -2,7 +2,7 @@ package templates
 
 import (
 	"html/template"
-	"log"
+	"starterProject/logger"
 )
 
 /* NOTE: in order to add a new template there are 3 steps
@@ -53,26 +53,26 @@ func InitTemplates() {
 	// NOTE: base.html must come first. Templates are "inherited" from left to right
 	HomeTemplate, err = template.ParseFiles("templates/base.html", "templates/home.html")
 	if err != nil {
-		log.Fatal(err)
+		logger.Logger.Fatal(err)
 	}
 
 	AboutTemplate, err = template.ParseFiles("templates/base.html", "templates/about.html")
 	if err != nil {
-		log.Fatal(err)
+		logger.Logger.Fatal(err)
 	}
 
 	SignUpTemplate, err = template.ParseFiles("templates/signup.html")
 	if err != nil {
-		log.Fatal(err)
+		logger.Logger.Fatal(err)
 	}
 
 	LoginTemplate, err = template.ParseFiles("templates/login.html")
 	if err != nil {
-		log.Fatal(err)
+		logger.Logger.Fatal(err)
 	}
 
 	DeleteTemplate, err = template.ParseFiles("templates/delete.html")
 	if err != nil {
-		log.Fatal(err)
+		logger.Logger.Fatal(err)
 	}
 }

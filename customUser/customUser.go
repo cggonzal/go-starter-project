@@ -2,10 +2,10 @@ package customUser
 
 import (
 	"database/sql"
-	"log"
 	"net/http"
 	"os"
 	"starterProject/DB"
+	"starterProject/logger"
 	"starterProject/templates"
 
 	"github.com/gorilla/sessions"
@@ -95,7 +95,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		// If there is any issue with inserting into the database, return a 500 error
 		w.WriteHeader(http.StatusInternalServerError)
-		log.Print("Error inserting into database:", err)
+		logger.Logger.Print("Error inserting into database:", err)
 		return
 	}
 
@@ -200,7 +200,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	_, err = DB.DBCon.Exec("DELETE FROM users WHERE email=$1", creds.Email)
 
 	if err != nil {
-		log.Print("ERROR: Encountered the following error when deleting user ", creds.Email, ":", err)
+		logger.Logger.Print("ERROR: Encountered the following error when deleting user ", creds.Email, ":", err)
 		w.WriteHeader(http.StatusBadRequest)
 		data := templates.DeleteData{UserDoesNotExist: true}
 		templates.DeleteTemplate.Execute(w, data)

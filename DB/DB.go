@@ -3,8 +3,8 @@ package DB
 import (
 	"database/sql"
 	"fmt"
-	"log"
 	"os"
+	"starterProject/logger"
 	"strconv"
 
 	_ "github.com/lib/pq"
@@ -28,10 +28,10 @@ func handleMigrations() {
 			lastMigration = 0
 			_, err = DBCon.Exec("INSERT INTO migration (last_applied_migration) VALUES (0)")
 			if err != nil {
-				log.Fatal("Could not insert into the migrations table... Exiting...", err)
+				logger.Logger.Fatal("Could not insert into the migrations table... Exiting...", err)
 			}
 		} else {
-			log.Fatal("Error with the migrations table in the DB... Exiting...", err)
+			logger.Logger.Fatal("Error with the migrations table in the DB... Exiting...", err)
 		}
 
 	}
@@ -40,7 +40,7 @@ func handleMigrations() {
 	var files []os.DirEntry
 	files, err = os.ReadDir("./migrations")
 	if err != nil {
-		log.Fatal("Error trying to read migrations directory... Exiting...", err)
+		logger.Logger.Fatal("Error trying to read migrations directory... Exiting...", err)
 	}
 	numMigrationFiles := len(files)
 	if numMigrationFiles > lastMigration {
@@ -51,7 +51,7 @@ func handleMigrations() {
 		defer tx.Rollback()
 
 		if err != nil {
-			log.Fatal("Error starting migration transaction... Exiting...", err)
+			logger.Logger.Fatal("Error starting migration transaction... Exiting...", err)
 		}
 
 		// put all new sql statements into the transaction
@@ -59,7 +59,7 @@ func handleMigrations() {
 			migrationFileToApply := "migration_" + strconv.Itoa(lastMigration+i+1) + ".sql"
 			migrationStatement, err := os.ReadFile(migrationFileToApply)
 			if err != nil {
-				log.Fatal("Error reading migration file... Exiting...", err)
+				logger.Logger.Fatal("Error reading migration file... Exiting...", err)
 			}
 			// add statement to transaction
 			_, err = tx.Exec(string(migrationStatement))
@@ -69,9 +69,9 @@ func handleMigrations() {
 		result, err := tx.Exec("UPDATE migration SET last_applied_migration = $1", numMigrationFiles)
 		numRowsAffected, err := result.RowsAffected()
 		if numRowsAffected != 1 {
-			log.Fatal("Error, UPDATE statement affected more than 1 row... Exiting...", err)
+			logger.Logger.Fatal("Error, UPDATE statement affected more than 1 row... Exiting...", err)
 		} else if err != nil {
-			log.Fatal("Error with UPDATE statement... Exiting...", err)
+			logger.Logger.Fatal("Error with UPDATE statement... Exiting...", err)
 		}
 
 		// Commit changes
@@ -83,10 +83,10 @@ func handleMigrations() {
 	result = DBCon.QueryRow("SELECT COUNT(*) from migration")
 	err = result.Scan(&numRows)
 	if err != nil {
-		log.Fatal("Error verifying number of rows in migration table... Exiting...", err)
+		logger.Logger.Fatal("Error verifying number of rows in migration table... Exiting...", err)
 	}
 	if numRows != 1 {
-		log.Fatal("ERROR... Migration table does not contain exactly 1 row... Exiting...", err)
+		logger.Logger.Fatal("ERROR... Migration table does not contain exactly 1 row... Exiting...", err)
 	}
 }
 
@@ -104,13 +104,13 @@ func InitDB() {
 	var err error
 	DBCon, err = sql.Open("postgres", connStr)
 	if err != nil {
-		log.Fatal("Error opening the DB... Exiting...")
+		logger.Logger.Fatal("Error opening the DB... Exiting...")
 	}
 
 	// check that the database can be connected to
 	err = DBCon.Ping()
 	if err != nil {
-		log.Fatal("Error pinging the DB... Exiting...", err)
+		logger.Logger.Fatal("Error pinging the DB... Exiting...", err)
 	}
 
 	// handleMigrations()
