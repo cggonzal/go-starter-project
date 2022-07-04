@@ -45,30 +45,37 @@ func handleMigrations() {
 	numMigrationFiles := len(files)
 	if numMigrationFiles > lastMigration {
 		// start transaction
-		migrationTransaction := "BEGIN;"
+		tx, err := DBCon.Begin()
+
+		// defer rollback in case anything fails. If commit happens successfully, rollback does nothing
+		defer tx.Rollback()
+
+		if err != nil {
+			log.Fatal("Error starting migration transaction... Exiting...", err)
+		}
 
 		// put all new sql statements into the transaction
 		for i := 0; i < numMigrationFiles-lastMigration; i += 1 {
 			migrationFileToApply := "migration_" + strconv.Itoa(lastMigration+i+1) + ".sql"
 			migrationStatement, err := os.ReadFile(migrationFileToApply)
 			if err != nil {
-				log.Fatal("Error reading migration file... Exiting...", string(migrationStatement))
+				log.Fatal("Error reading migration file... Exiting...", err)
 			}
-			// append statement to transaction
-			migrationTransaction += string(migrationStatement)
+			// add statement to transaction
+			_, err = tx.Exec(string(migrationStatement))
 		}
 
 		// update last_applied_migration_value
-		migrationTransaction += "UPDATE migration SET last_applied_migration = " + strconv.Itoa(numMigrationFiles) + ";"
-
-		// add final commit statement
-		migrationTransaction += "COMMIT;"
-
-		// execute transaction
-		_, err = DBCon.Exec(string(migrationTransaction))
-		if err != nil {
-			log.Fatal("Error with executing migrations... Exiting...")
+		result, err := tx.Exec("UPDATE migration SET last_applied_migration = $1", numMigrationFiles)
+		numRowsAffected, err := result.RowsAffected()
+		if numRowsAffected != 1 {
+			log.Fatal("Error, UPDATE statement affected more than 1 row... Exiting...", err)
+		} else if err != nil {
+			log.Fatal("Error with UPDATE statement... Exiting...", err)
 		}
+
+		// Commit changes
+		tx.Commit()
 	}
 
 	// verify that there is only one row in the migrations table
