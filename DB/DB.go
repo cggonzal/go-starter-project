@@ -37,8 +37,7 @@ func handleMigrations() {
 	}
 
 	// apply new migrations, if needed
-	var files []os.DirEntry
-	files, err = os.ReadDir("./migrations")
+	files, err := os.ReadDir("./migrations")
 	if err != nil {
 		logger.Logger.Fatal("Error trying to read migrations directory... Exiting...", err)
 	}
