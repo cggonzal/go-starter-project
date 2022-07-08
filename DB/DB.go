@@ -88,7 +88,7 @@ func handleMigrations() {
 		logger.Logger.Fatal("Error verifying number of rows in migration table... Exiting...", err)
 	}
 	if numRows != 1 {
-		logger.Logger.Fatal("ERROR... Migration table does not contain exactly 1 row... Exiting...", err)
+		logger.Logger.Fatal("ERROR... Migration table does not contain exactly 1 row... Exiting...")
 	}
 }
 
