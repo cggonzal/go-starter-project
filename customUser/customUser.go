@@ -22,12 +22,6 @@ var (
 	BCRYPT_COST = 8
 )
 
-// user credentials
-type Credentials struct {
-	Email    string
-	Password string
-}
-
 func InitUser() {
 	// set session to end when browser disconnects
 	// docs: https://pkg.go.dev/github.com/gorilla/sessions#CookieStore.MaxAge
@@ -71,11 +65,11 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// store the request body into a new `Credentials` instance
-	creds := &Credentials{Email: r.PostFormValue("email"), Password: r.PostFormValue("password")}
+	// store the request body into a new `DB.Users` instance
+	creds := &DB.Users{Email: r.PostFormValue("email"), Password: r.PostFormValue("password")}
 
 	// If the email already exists, prevent sign up
-	storedCreds := &Credentials{}
+	storedCreds := &DB.Users{}
 	result := DB.DBCon.QueryRow("SELECT email FROM users WHERE email=$1", creds.Email)
 	err = result.Scan(&storedCreds.Email)
 	if err != sql.ErrNoRows {
@@ -125,14 +119,14 @@ func Login(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// store the request body into a new `Credentials` instance
-	creds := &Credentials{Email: r.PostFormValue("email"), Password: r.PostFormValue("password")}
+	// store the request body into a new `DB.Users` instance
+	creds := &DB.Users{Email: r.PostFormValue("email"), Password: r.PostFormValue("password")}
 
 	// Get the existing entry present in the database for the given email
 	result := DB.DBCon.QueryRow("SELECT password FROM users WHERE email=$1", creds.Email)
 
-	// We create another instance of `Credentials` to store the credentials we get from the database
-	storedCreds := &Credentials{}
+	// We create another instance of `DB.Users` to store the credentials we get from the database
+	storedCreds := &DB.Users{}
 
 	// Store the obtained password in `storedCreds`
 	err = result.Scan(&storedCreds.Password)
@@ -193,8 +187,8 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// store the request body into a new `Credentials` instance
-	creds := &Credentials{Email: r.PostFormValue("email"), Password: r.PostFormValue("password")}
+	// store the request body into a new `DB.Users` instance
+	creds := &DB.Users{Email: r.PostFormValue("email"), Password: r.PostFormValue("password")}
 
 	// attempt to delete user
 	_, err = DB.DBCon.Exec("DELETE FROM users WHERE email=$1", creds.Email)
