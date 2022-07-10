@@ -37,7 +37,7 @@ func handleMigrations() {
 	}
 
 	// apply new migrations, if needed
-	files, err := os.ReadDir("./migrations")
+	files, err := os.ReadDir("./DB/migrations")
 	if err != nil {
 		logger.Logger.Fatal("Error trying to read migrations directory... Exiting...", err)
 	}
@@ -55,7 +55,7 @@ func handleMigrations() {
 
 		// put all new sql statements into the transaction
 		for i := 0; i < numMigrationFiles-lastMigration; i += 1 {
-			migrationFileToApply := "migration_" + strconv.Itoa(lastMigration+i+1) + ".sql"
+			migrationFileToApply := "./DB/migrations/migration_" + strconv.Itoa(lastMigration+i+1) + ".sql"
 			migrationStatement, err := os.ReadFile(migrationFileToApply)
 			if err != nil {
 				logger.Logger.Fatal("Error reading migration file... Exiting...", err)
@@ -115,6 +115,6 @@ func InitDB() {
 		logger.Logger.Fatal("Error pinging the DB... Exiting...", err)
 	}
 
-	// handleMigrations()
+	handleMigrations()
 
 }
