@@ -70,8 +70,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 
 	// If the email already exists, prevent sign up
 	storedCreds := &DB.Users{}
-	result := DB.DBCon.QueryRow("SELECT email FROM users WHERE email=$1", creds.Email)
-	err = result.Scan(&storedCreds.Email)
+	err = DB.DBCon.QueryRow("SELECT email FROM users WHERE email=$1", creds.Email).Scan(&storedCreds.Email)
 	if err != sql.ErrNoRows {
 		// user with this email already exists
 		w.WriteHeader(http.StatusForbidden)
@@ -122,14 +121,11 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	// store the request body into a new `DB.Users` instance
 	creds := &DB.Users{Email: r.PostFormValue("email"), Password: r.PostFormValue("password")}
 
-	// Get the existing entry present in the database for the given email
-	result := DB.DBCon.QueryRow("SELECT password FROM users WHERE email=$1", creds.Email)
-
 	// We create another instance of `DB.Users` to store the credentials we get from the database
 	storedCreds := &DB.Users{}
 
-	// Store the obtained password in `storedCreds`
-	err = result.Scan(&storedCreds.Password)
+	// Get the existing password in the database for the given email
+	err = DB.DBCon.QueryRow("SELECT password FROM users WHERE email=$1", creds.Email).Scan(&storedCreds.Password)
 	if err != nil {
 		// If an entry with the email does not exist, send an "Unauthorized"(401) status
 		if err == sql.ErrNoRows {
