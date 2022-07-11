@@ -188,7 +188,6 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 
 	// attempt to delete user
 	_, err = DB.DBCon.Exec("DELETE FROM users WHERE email=$1", creds.Email)
-
 	if err != nil {
 		logger.Logger.Print("ERROR: Encountered the following error when deleting user ", creds.Email, ":", err)
 		w.WriteHeader(http.StatusBadRequest)
