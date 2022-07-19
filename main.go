@@ -14,7 +14,7 @@ func index(w http.ResponseWriter, r *http.Request) {
 	http.ServeFile(w, r, "./static/index.html")
 }
 
-func about(w http.ResponseWriter, r *http.Request) {
+func about(w http.ResponseWriter, _ *http.Request) {
 	data := templates.AboutData{UserID: "user id", UserImage: "/static/images/test.jpg"}
 	templates.AboutTemplate.Execute(w, data)
 }
