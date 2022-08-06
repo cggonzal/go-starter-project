@@ -5,8 +5,8 @@ import (
 	"net/http"
 	"os"
 	"starterProject/DB"
+	"starterProject/customLogger"
 	"starterProject/customUser"
-	"starterProject/logger"
 	"starterProject/templates"
 )
 
@@ -35,7 +35,7 @@ func main() {
 	http.HandleFunc("/secret", customUser.Secret)
 
 	// initialize Logger, this has to come before all other initializations since they use the logger
-	logger.InitLogger()
+	customLogger.InitLogger()
 
 	// initialize database connection
 	DB.InitDB()
@@ -48,6 +48,7 @@ func main() {
 
 	// start the server on given $PORT
 	PORT := fmt.Sprintf(":%s", os.Getenv("PORT"))
-	logger.Logger.Print("starting app on port ", PORT)
-	logger.Logger.Fatal(http.ListenAndServe(PORT, nil))
+	logger := customLogger.GetLogger()
+	logger.Print("starting app on port ", PORT)
+	logger.Fatal(http.ListenAndServe(PORT, nil))
 }

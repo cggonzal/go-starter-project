@@ -7,7 +7,7 @@ package templates
 
 import (
 	"html/template"
-	"starterProject/logger"
+	"starterProject/customLogger"
 )
 
 // 1.
@@ -47,31 +47,33 @@ type SignUpData struct {
 // 3.
 // initialize templates. Store them in global variables so that files don't have to be parsed on every request
 func InitTemplates() {
+	logger := customLogger.GetLogger()
+
 	var err error
 
 	// NOTE: base.html must come first. Templates are "inherited" from left to right
 	HomeTemplate, err = template.ParseFiles("templates/base.html", "templates/home.html")
 	if err != nil {
-		logger.Logger.Fatal(err)
+		logger.Fatal(err)
 	}
 
 	AboutTemplate, err = template.ParseFiles("templates/base.html", "templates/about.html")
 	if err != nil {
-		logger.Logger.Fatal(err)
+		logger.Fatal(err)
 	}
 
 	SignUpTemplate, err = template.ParseFiles("templates/signup.html")
 	if err != nil {
-		logger.Logger.Fatal(err)
+		logger.Fatal(err)
 	}
 
 	LoginTemplate, err = template.ParseFiles("templates/login.html")
 	if err != nil {
-		logger.Logger.Fatal(err)
+		logger.Fatal(err)
 	}
 
 	DeleteTemplate, err = template.ParseFiles("templates/delete.html")
 	if err != nil {
-		logger.Logger.Fatal(err)
+		logger.Fatal(err)
 	}
 }
