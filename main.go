@@ -46,9 +46,14 @@ func main() {
 	// initialize templates
 	templates.InitTemplates()
 
+	// check if given $PORT environment variable
+	logger := customLogger.GetLogger()
+	if os.Getenv("PORT") == "" {
+		logger.Fatal("ERROR... No $PORT environment variable set... Exiting...")
+	}
+
 	// start the server on given $PORT
 	PORT := fmt.Sprintf(":%s", os.Getenv("PORT"))
-	logger := customLogger.GetLogger()
 	logger.Print("starting app on port ", PORT)
 	logger.Fatal(http.ListenAndServe(PORT, nil))
 }
