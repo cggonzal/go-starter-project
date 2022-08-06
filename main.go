@@ -35,7 +35,7 @@ func main() {
 	http.HandleFunc("/secret", customUser.Secret)
 
 	// initialize Logger, this has to come before all other initializations since they use the logger
-	logger.Logger = logger.InitLogger()
+	logger.InitLogger()
 
 	// initialize database connection
 	DB.InitDB()
