@@ -5,6 +5,7 @@ import (
 	"os"
 )
 
+// Logger should be used for all logging in the project
 var (
 	Logger *log.Logger
 )
