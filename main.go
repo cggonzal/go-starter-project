@@ -46,7 +46,7 @@ func main() {
 	// initialize templates
 	templates.InitTemplates()
 
-	// check if given $PORT environment variable
+	// check if $PORT environment variable is set
 	logger := customLogger.GetLogger()
 	if os.Getenv("PORT") == "" {
 		logger.Fatal("ERROR... No $PORT environment variable set... Exiting...")
