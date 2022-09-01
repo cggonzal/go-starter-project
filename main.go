@@ -24,7 +24,6 @@ func upload(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method != http.MethodPost {
 		// if asking for file, serve file
-		logger.Print("url path: ", r.URL.Path)
 		if r.URL.Path != "/upload/" {
 			filename := r.URL.Path[len("/upload/"):]
 			w.Header().Set("Content-Disposition", "attachment; filename="+filename)
@@ -63,7 +62,6 @@ func upload(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		logger.Fatal("Error saving file:", err)
 	}
-	logger.Printf("saved file to savedFiles/%s", header.Filename)
 
 	// redirect to landing page
 	http.Redirect(w, r, "/", http.StatusFound)
