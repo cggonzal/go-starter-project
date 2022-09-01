@@ -33,7 +33,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		// serve list of files
+		// serve list of files if not requesting a specific file
 		files, err := os.ReadDir("./savedFiles/")
 		if err != nil {
 			logger.Fatal("error reading directory: ", err)
