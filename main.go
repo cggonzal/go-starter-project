@@ -20,13 +20,32 @@ func about(w http.ResponseWriter, _ *http.Request) {
 }
 
 func upload(w http.ResponseWriter, r *http.Request) {
+	logger := customLogger.GetLogger()
+
 	if r.Method != http.MethodPost {
-		// TODO: change GET method to create a template that returns an html page showing all uploaded files with hyper links...
-		http.ServeFile(w, r, "./static/upload.html")
+		// if asking for file, serve file
+		logger.Print("url path: ", r.URL.Path)
+		if r.URL.Path != "/upload/" {
+			filename := r.URL.Path[len("/upload/"):]
+			w.Header().Set("Content-Disposition", "attachment; filename="+filename)
+			w.Header().Set("Content-Type", "application/octet-stream")
+			http.ServeFile(w, r, "./savedFiles/"+filename)
+			return
+		}
+
+		// serve list of files
+		files, err := os.ReadDir("./savedFiles/")
+		if err != nil {
+			logger.Fatal("error reading directory: ", err)
+		}
+		var fileNames []string
+		for _, file := range files {
+			fileNames = append(fileNames, file.Name())
+		}
+		data := templates.UploadData{UploadedFileNames: fileNames}
+		templates.UploadTemplate.Execute(w, data)
 		return
 	}
-
-	logger := customLogger.GetLogger()
 
 	// get uploaded file
 	file, header, err := r.FormFile("filename")
@@ -64,7 +83,7 @@ func main() {
 	http.HandleFunc("/logout", customUser.Logout)
 	http.HandleFunc("/delete", customUser.Delete)
 	http.HandleFunc("/secret", customUser.Secret)
-	http.HandleFunc("/upload", upload)
+	http.HandleFunc("/upload/", upload)
 
 	// initialize Logger, this has to come before all other initializations since they use the logger
 	customLogger.InitLogger()

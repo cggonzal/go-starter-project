@@ -18,6 +18,7 @@ var (
 	SignUpTemplate *template.Template
 	LoginTemplate  *template.Template
 	DeleteTemplate *template.Template
+	UploadTemplate *template.Template
 )
 
 // 2.
@@ -42,6 +43,10 @@ type DeleteData struct {
 
 type SignUpData struct {
 	UserAlreadyExists bool
+}
+
+type UploadData struct {
+	UploadedFileNames []string
 }
 
 // 3.
@@ -73,6 +78,11 @@ func InitTemplates() {
 	}
 
 	DeleteTemplate, err = template.ParseFiles("templates/delete.html")
+	if err != nil {
+		logger.Fatal(err)
+	}
+
+	UploadTemplate, err = template.ParseFiles("templates/upload.html")
 	if err != nil {
 		logger.Fatal(err)
 	}

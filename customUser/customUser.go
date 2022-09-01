@@ -80,7 +80,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// hash the password using bcrypt
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(creds.Password), BCRYPT_COST)
+	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(creds.Password), BCRYPT_COST)
 
 	// insert the email and hashed password into the database
 	_, err = DB.DBCon.Exec("INSERT INTO users (email, password) values ($1, $2)",
