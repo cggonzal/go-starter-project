@@ -1,7 +1,10 @@
 package main
 
 import (
+	"bytes"
+	"io"
 	"log"
+	"mime/multipart"
 	"net/http"
 	"net/http/cookiejar"
 	"net/url"
@@ -92,6 +95,41 @@ func main() {
 	resp, _ = client.PostForm("http://127.0.0.1:8000/login", creds)
 	if resp.StatusCode != http.StatusUnauthorized {
 		logger.Fatal("expected status 401 got status: ", resp.StatusCode)
+	}
+
+	// upload a file and verify response
+	file, err := os.Open("./tests/test.txt")
+	if err != nil {
+		logger.Fatal("error opening test file to be uploaded: ", err)
+	}
+	defer file.Close()
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	part, err := writer.CreateFormFile("filename", "test.txt")
+	if err != nil {
+		logger.Fatal("error creating form file: ", err)
+	}
+	io.Copy(part, file)
+	writer.Close()
+
+	r, _ := http.NewRequest("POST", "http://127.0.0.1:8000/upload/", body)
+	r.Header.Add("Content-Type", writer.FormDataContentType())
+	resp, _ = client.Do(r)
+	if resp.StatusCode != http.StatusOK {
+		logger.Fatal("expected status 200 got status: ", resp.StatusCode)
+	}
+
+	// download file that was previously uploaded
+	resp, _ = client.Get("http://127.0.0.1:8000/upload/test.txt")
+	if resp.StatusCode != http.StatusOK {
+		logger.Fatal("expected status 200 got status: ", resp.StatusCode)
+	}
+
+	// attempt to download file that doesn't exist
+	resp, _ = client.Get("http://127.0.0.1:8000/upload/testsjdfdsfhjbashs13123dfabn.txt")
+	if resp.StatusCode != http.StatusNotFound {
+		logger.Fatal("expected status 404 got status: ", resp.StatusCode)
 	}
 
 	logger.Print("All tests passed!")
