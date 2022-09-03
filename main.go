@@ -22,18 +22,21 @@ func about(w http.ResponseWriter, _ *http.Request) {
 func upload(w http.ResponseWriter, r *http.Request) {
 	logger := customLogger.GetLogger()
 
+	// directory where uploaded files are saved to / read from
+	saveDir := "./savedFiles/"
+
 	if r.Method != http.MethodPost {
 		// if asking for file, serve file
 		if r.URL.Path != "/upload/" {
 			filename := r.URL.Path[len("/upload/"):]
 			w.Header().Set("Content-Disposition", "attachment; filename="+filename)
 			w.Header().Set("Content-Type", "application/octet-stream")
-			http.ServeFile(w, r, "./savedFiles/"+filename)
+			http.ServeFile(w, r, saveDir+filename)
 			return
 		}
 
 		// serve list of files if not requesting a specific file
-		files, err := os.ReadDir("./savedFiles/")
+		files, err := os.ReadDir(saveDir)
 		if err != nil {
 			logger.Fatal("error reading directory: ", err)
 		}
@@ -58,7 +61,7 @@ func upload(w http.ResponseWriter, r *http.Request) {
 		logger.Fatal("error reading file: ", err)
 	}
 
-	err = os.WriteFile("./savedFiles/"+header.Filename, data, 0666)
+	err = os.WriteFile(saveDir+header.Filename, data, 0666)
 	if err != nil {
 		logger.Fatal("Error saving file:", err)
 	}
