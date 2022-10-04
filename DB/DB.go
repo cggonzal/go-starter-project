@@ -74,6 +74,9 @@ func handleMigrations() {
 
 		// update last_applied_migration_value
 		result, err := tx.Exec("UPDATE migration SET last_applied_migration = $1", numMigrationFiles)
+		if err != nil {
+			logger.Fatal("Error updating last_applied_migration value...", err)
+		}
 		numRowsAffected, err := result.RowsAffected()
 		if numRowsAffected != 1 {
 			logger.Fatal("Error, UPDATE statement affected more than 1 row... Exiting...", err)
