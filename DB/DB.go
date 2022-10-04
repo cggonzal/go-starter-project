@@ -21,6 +21,9 @@ func handleMigrations() {
 
 	// if migration table doesn't exist, create it and set migration number to 0
 	_, err := DBCon.Exec("CREATE TABLE IF NOT EXISTS migration (last_applied_migration INTEGER)")
+	if err != nil {
+		logger.Fatal("Error creating table when handling migrations...", err)
+	}
 	var lastMigration int
 	result := DBCon.QueryRow("SELECT last_applied_migration from migration")
 	err = result.Scan(&lastMigration)
