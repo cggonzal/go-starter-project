@@ -23,6 +23,10 @@ var (
 )
 
 func InitUser() {
+	logger := customLogger.GetLogger()
+	if string(key) == "" {
+		logger.Fatal("SECRET_KEY env variable not found... exiting...")
+	}
 	// set session to end when browser disconnects
 	// docs: https://pkg.go.dev/github.com/gorilla/sessions#CookieStore.MaxAge
 	// https://pkg.go.dev/github.com/gorilla/sessions#Options
