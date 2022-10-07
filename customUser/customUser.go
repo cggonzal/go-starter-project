@@ -20,6 +20,8 @@ var (
 
 	// NOTE: change as needed
 	BCRYPT_COST = 8
+
+	sessionCookieName = "session-cookie"
 )
 
 func InitUser() {
@@ -34,7 +36,7 @@ func InitUser() {
 }
 
 func IsAuthenticated(r *http.Request) bool {
-	session, _ := store.Get(r, "session-cookie")
+	session, _ := store.Get(r, sessionCookieName)
 	auth, ok := session.Values["authenticated"].(bool)
 
 	if !auth || !ok {
@@ -98,7 +100,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// creates the cookie since it does not exist
-	session, _ := store.Get(r, "session-cookie")
+	session, _ := store.Get(r, sessionCookieName)
 
 	// Set user as authenticated
 	session.Values["authenticated"] = true
@@ -154,7 +156,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// If we reach this point, that means the users password was correct, so set the user as authenticated
-	session, _ := store.Get(r, "session-cookie")
+	session, _ := store.Get(r, sessionCookieName)
 	session.Values["authenticated"] = true
 	session.Save(r, w)
 
@@ -163,7 +165,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func Logout(w http.ResponseWriter, r *http.Request) {
-	session, _ := store.Get(r, "session-cookie")
+	session, _ := store.Get(r, sessionCookieName)
 
 	// Revoke users authentication
 	session.Values["authenticated"] = false
