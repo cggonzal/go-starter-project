@@ -11,16 +11,17 @@ import (
 )
 
 var (
-	DBCon *sql.DB
+	DBHandle *sql.DB
 )
 
-func GetDBConnection() *sql.DB {
-	return DBCon
+// returns the database handle
+func GetDB() *sql.DB {
+	return DBHandle
 }
 
 func handleMigrations() {
 	logger := customLogger.GetLogger()
-	db := GetDBConnection()
+	db := GetDB()
 
 	// DB contains a table called "migration" which contains one row that holds the number of the last applied migration
 
@@ -121,13 +122,13 @@ func InitDB() {
 	// cannot use walrus operator on DBCon and err declaration below since that creates a local version of DBCon which
 	// does not set the global variable
 	var err error
-	DBCon, err = sql.Open("postgres", connStr)
+	DBHandle, err = sql.Open("postgres", connStr)
 	if err != nil {
 		logger.Fatal("Error opening the DB... Exiting...")
 	}
 
 	// check that the database can be connected to
-	err = DBCon.Ping()
+	err = DBHandle.Ping()
 	if err != nil {
 		logger.Fatal("Error pinging the DB... Exiting...", err)
 	}

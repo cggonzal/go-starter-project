@@ -76,7 +76,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 
 	// If the email already exists, prevent sign up
 	storedCreds := &DB.Users{}
-	db := DB.GetDBConnection()
+	db := DB.GetDB()
 	err = db.QueryRow("SELECT email FROM users WHERE email=$1", creds.Email).Scan(&storedCreds.Email)
 	if err != sql.ErrNoRows {
 		// user with this email already exists
@@ -133,7 +133,7 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	storedCreds := &DB.Users{}
 
 	// Get the existing password in the database for the given email
-	db := DB.GetDBConnection()
+	db := DB.GetDB()
 	err = db.QueryRow("SELECT password FROM users WHERE email=$1", creds.Email).Scan(&storedCreds.Password)
 	if err != nil {
 		// If an entry with the email does not exist, send an "Unauthorized"(401) status
@@ -196,7 +196,7 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	creds := &DB.Users{Email: r.PostFormValue("email"), Password: r.PostFormValue("password")}
 
 	// attempt to delete user
-	db := DB.GetDBConnection()
+	db := DB.GetDB()
 	_, err = db.Exec("DELETE FROM users WHERE email=$1", creds.Email)
 	if err != nil {
 		logger := customLogger.GetLogger()
