@@ -11,12 +11,12 @@ import (
 )
 
 var (
-	DBHandle *sql.DB
+	dbHandle *sql.DB
 )
 
 // returns the database handle
 func GetDB() *sql.DB {
-	return DBHandle
+	return dbHandle
 }
 
 func handleMigrations() {
@@ -122,13 +122,13 @@ func InitDB() {
 	// cannot use walrus operator on DBCon and err declaration below since that creates a local version of DBCon which
 	// does not set the global variable
 	var err error
-	DBHandle, err = sql.Open("postgres", connStr)
+	dbHandle, err = sql.Open("postgres", connStr)
 	if err != nil {
 		logger.Fatal("Error opening the DB... Exiting...")
 	}
 
 	// check that the database can be connected to
-	err = DBHandle.Ping()
+	err = dbHandle.Ping()
 	if err != nil {
 		logger.Fatal("Error pinging the DB... Exiting...", err)
 	}
