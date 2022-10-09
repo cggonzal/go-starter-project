@@ -113,6 +113,8 @@ func InitDB() {
 	connStr := fmt.Sprintf("user=%s dbname=%s sslmode=disable host=%s port=%s password=%s",
 		PGUSER, PGDATABASE, PGHOST, PGPORT, PGPASSWORD)
 
+	// cannot use walrus operator on DBCon and err declaration below since that creates a local version of DBCon which
+	// does not set the global variable
 	var err error
 	DBCon, err = sql.Open("postgres", connStr)
 	if err != nil {
