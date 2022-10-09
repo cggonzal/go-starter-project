@@ -14,24 +14,29 @@ var (
 	DBCon *sql.DB
 )
 
+func GetDBConnection() *sql.DB {
+	return DBCon
+}
+
 func handleMigrations() {
 	logger := customLogger.GetLogger()
+	db := GetDBConnection()
 
 	// DB contains a table called "migration" which contains one row that holds the number of the last applied migration
 
 	// if migration table doesn't exist, create it and set migration number to 0
-	_, err := DBCon.Exec("CREATE TABLE IF NOT EXISTS migration (last_applied_migration INTEGER)")
+	_, err := db.Exec("CREATE TABLE IF NOT EXISTS migration (last_applied_migration INTEGER)")
 	if err != nil {
 		logger.Fatal("Error creating table when handling migrations...", err)
 	}
 	var lastMigration int
-	result := DBCon.QueryRow("SELECT last_applied_migration from migration")
+	result := db.QueryRow("SELECT last_applied_migration from migration")
 	err = result.Scan(&lastMigration)
 	if err != nil {
 		// migrations table is empty, create the single row in the table and set its value to 0
 		if err == sql.ErrNoRows {
 			lastMigration = 0
-			_, err = DBCon.Exec("INSERT INTO migration (last_applied_migration) VALUES (0)")
+			_, err = db.Exec("INSERT INTO migration (last_applied_migration) VALUES (0)")
 			if err != nil {
 				logger.Fatal("Could not insert into the migrations table... Exiting...", err)
 			}
@@ -49,7 +54,7 @@ func handleMigrations() {
 	numMigrationFiles := len(files)
 	if numMigrationFiles > lastMigration {
 		// start transaction
-		tx, err := DBCon.Begin()
+		tx, err := db.Begin()
 
 		// defer rollback in case anything fails. If commit happens successfully, rollback does nothing
 		defer tx.Rollback()
@@ -90,7 +95,7 @@ func handleMigrations() {
 
 	// verify that there is only one row in the migrations table
 	var numRows int
-	result = DBCon.QueryRow("SELECT COUNT(*) from migration")
+	result = db.QueryRow("SELECT COUNT(*) from migration")
 	err = result.Scan(&numRows)
 	if err != nil {
 		logger.Fatal("Error verifying number of rows in migration table... Exiting...", err)

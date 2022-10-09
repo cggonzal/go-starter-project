@@ -76,7 +76,8 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 
 	// If the email already exists, prevent sign up
 	storedCreds := &DB.Users{}
-	err = DB.DBCon.QueryRow("SELECT email FROM users WHERE email=$1", creds.Email).Scan(&storedCreds.Email)
+	db := DB.GetDBConnection()
+	err = db.QueryRow("SELECT email FROM users WHERE email=$1", creds.Email).Scan(&storedCreds.Email)
 	if err != sql.ErrNoRows {
 		// user with this email already exists
 		w.WriteHeader(http.StatusForbidden)
@@ -89,7 +90,7 @@ func SignUp(w http.ResponseWriter, r *http.Request) {
 	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte(creds.Password), BCRYPT_COST)
 
 	// insert the email and hashed password into the database
-	_, err = DB.DBCon.Exec("INSERT INTO users (email, password) values ($1, $2)",
+	_, err = db.Exec("INSERT INTO users (email, password) values ($1, $2)",
 		creds.Email, string(hashedPassword))
 	if err != nil {
 		// If there is any issue with inserting into the database, return a 500 error
@@ -132,7 +133,8 @@ func Login(w http.ResponseWriter, r *http.Request) {
 	storedCreds := &DB.Users{}
 
 	// Get the existing password in the database for the given email
-	err = DB.DBCon.QueryRow("SELECT password FROM users WHERE email=$1", creds.Email).Scan(&storedCreds.Password)
+	db := DB.GetDBConnection()
+	err = db.QueryRow("SELECT password FROM users WHERE email=$1", creds.Email).Scan(&storedCreds.Password)
 	if err != nil {
 		// If an entry with the email does not exist, send an "Unauthorized"(401) status
 		if err == sql.ErrNoRows {
@@ -194,7 +196,8 @@ func Delete(w http.ResponseWriter, r *http.Request) {
 	creds := &DB.Users{Email: r.PostFormValue("email"), Password: r.PostFormValue("password")}
 
 	// attempt to delete user
-	_, err = DB.DBCon.Exec("DELETE FROM users WHERE email=$1", creds.Email)
+	db := DB.GetDBConnection()
+	_, err = db.Exec("DELETE FROM users WHERE email=$1", creds.Email)
 	if err != nil {
 		logger := customLogger.GetLogger()
 		logger.Print("ERROR: Encountered the following error when deleting user ", creds.Email, ":", err)
