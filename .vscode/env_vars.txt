@@ -1,0 +1,7 @@
+PORT=8000
+PGUSER=cgg
+PGPASSWORD=mypass
+PGDATABASE=mytestdb
+PGHOST=localhost
+PGPORT=5432 
+SECRET_KEY=aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
